@@ -53,3 +53,35 @@ services:
       - RABBITMQ_DEFAULT_PASS=demo
     depends_on:
       - web
+  beat:
+    image: demo-web
+    volumes:
+      - .:/code
+    command: python -m celery -A demo beat -l info
+    environment:
+      - POSTGRES_HOST=db
+      - POSTGRES_NAME=demo
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - RABBITMQ_DEFAULT_VHOST=demo_vhost
+      - RABBITMQ_DEFAULT_USER=demo
+      - RABBITMQ_DEFAULT_PASS=demo
+    depends_on:
+      - web
+  flower:
+    image: demo-web
+    volumes:
+      - .:/code
+    command: python -m celery -A demo flower
+    ports:
+      - "5555:5555"
+    environment:
+      - POSTGRES_HOST=db
+      - POSTGRES_NAME=demo
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - RABBITMQ_DEFAULT_VHOST=demo_vhost
+      - RABBITMQ_DEFAULT_USER=demo
+      - RABBITMQ_DEFAULT_PASS=demo
+    depends_on:
+      - web
