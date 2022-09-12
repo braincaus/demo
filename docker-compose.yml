@@ -38,3 +38,18 @@ services:
     depends_on:
       - db
       - rabbitmq
+  worker:
+    image: demo-web
+    volumes:
+      - .:/code
+    command: python -m celery -A demo worker -l info
+    environment:
+      - POSTGRES_HOST=db
+      - POSTGRES_NAME=demo
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - RABBITMQ_DEFAULT_VHOST=demo_vhost
+      - RABBITMQ_DEFAULT_USER=demo
+      - RABBITMQ_DEFAULT_PASS=demo
+    depends_on:
+      - web
